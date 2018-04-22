@@ -3,7 +3,7 @@
  * Automatic command-line wildcard expansion for environments that
  * are not based on the Un*x shell.
  *
- * Copyright (C) 2003-2017 Cosmin Truta.
+ * Copyright (C) 2003-2018 Cosmin Truta.
  *
  * This software is distributed under the zlib license.
  * Please see the accompanying LICENSE file.
@@ -15,9 +15,9 @@
 #include <stddef.h>
 
 /*
- * Automatic wildcard expansion for Microsoft Visual C++.
+ * Automatic wildcard expansion for Microsoft Visual C++ and MinGW.
  */
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __MINGW32__ || defined __MINGW64__
 #if defined _WIN32 || defined _WIN64
 /* The following line is inspired from MinGW32 by Colin Peters. */
 int _dowildcard = 1;
@@ -27,7 +27,7 @@ int _dowildcard = 1;
 /*
  * Automatic wildcard expansion for Borland C++.
  */
-#ifdef __BORLANDC__
+#if defined __BORLANDC__
 #if defined _WIN32 || defined __WIN32__ || defined _WIN64 || defined __WIN64__
 /* The following lines are inspired from BMP2PNG by MIYASAKA Masaru. */
 #include <wildargs.h>
