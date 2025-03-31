@@ -1,12 +1,16 @@
 /*
  * wildargs.c
- * Automatic command-line wildcard expansion for environments that
- * are not based on the Un*x shell.
+ * Automatic command-line wildcard expansion for
+ * environments that aren't based on the Un*x shell.
  *
- * Copyright (C) 2003-2022 Cosmin Truta.
+ * Copyright (C) 2003-2025 Cosmin Truta.
  *
- * This software is distributed under the zlib license.
- * Please see the accompanying LICENSE file.
+ * Use, modification and distribution are subject
+ * to the Boost Software License, Version 1.0.
+ * See the accompanying file LICENSE_BSL_1_0.txt
+ * or visit https://www.boost.org/LICENSE_1_0.txt
+ *
+ * SPDX-License-Identifier: BSL-1.0
  */
 
 /*
