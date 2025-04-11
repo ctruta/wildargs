@@ -13,55 +13,64 @@
  * SPDX-License-Identifier: BSL-1.0
  */
 
-/*
- * Dummy header inclusion for a guaranteed non-empty translation unit.
- */
-#include <stddef.h>
+#if defined _WIN64 || defined _WIN32 || defined __WIN32__ || defined __NT__
 
 /*
- * Compiler and platform detection.
+ * Compiler and runtime detection on Windows.
  */
-#if defined _WIN32 || defined __WIN32__ || defined __NT__
 #if defined _MSC_VER && (_MSC_VER >= 1900)
 #define WILDARGS_WINDOWS_UCRT
-#elif defined _MSC_VER && (_MSC_VER < 1900)
+#elif defined _MSC_VER && (_MSC_VER >= 800)
 #define WILDARGS_WINDOWS_MSVCRT
-#elif defined __MINGW32__ || defined __MINGW64__
+#elif defined __MINGW64__ || defined __MINGW32__
 #define WILDARGS_WINDOWS_MSVCRT
 #elif defined __BORLANDC__
-#define WILDARGS_WINDOWS_BORLANDC
+#define WILDARGS_WINDOWS_BORLANDRTL
+#elif defined __has_include
+#if __has_include(<vcruntime.h>) && __has_include(<vcruntime_startup.h>)
+#define WILDARGS_WINDOWS_UCRT
 #endif
-#endif  /* _WIN32 || __WIN32__ || __NT__ */
+#endif
+
+#endif
+
+#if defined WILDARGS_WINDOWS_UCRT
 
 /*
- * Automatic wildargs expansion for the modern Microsoft Visual C++ CRT (UCRT).
+ * Automatic wildargs expansion for the Microsoft Universal C Runtime (UCRT).
  * The implementation is inspired from the Microsoft UCRT source code.
  */
-#if defined WILDARGS_WINDOWS_UCRT
 #include <vcruntime_startup.h>
-_crt_argv_mode __CRTDECL _get_startup_argv_mode()
-{
-    return _crt_argv_expanded_arguments;
-}
-#endif
+_crt_argv_mode __CRTDECL _get_startup_argv_mode(void)
+{ return _crt_argv_expanded_arguments; }
+
+#elif defined WILDARGS_WINDOWS_MSVCRT
 
 /*
- * Automatic wildargs expansion for the older Microsoft Visual C++ CRT (MSVCRT)
- * and MinGW.
+ * Automatic wildargs expansion for the Microsoft Visual C++ Runtime (MSVCRT).
  * The implementation is inspired from MinGW32 by Colin Peters.
  */
-#if defined WILDARGS_WINDOWS_MSVCRT
 int _dowildcard = 1;
-#endif
+
+#elif defined WILDARGS_WINDOWS_BORLANDRTL
 
 /*
- * Automatic wildargs expansion for Borland C++ for Windows.
+ * Automatic wildargs expansion for the Borland C/C++ Runtime Library (RTL).
  * The implementation is inspired from BMP2PNG by MIYASAKA Masaru.
  */
-#if defined WILDARGS_WINDOWS_BORLANDC
 #include <wildargs.h>
 typedef void _RTLENTRY (* _RTLENTRY _argv_expand_fn)(char *, _PFN_ADDARG);
 typedef void _RTLENTRY (* _RTLENTRY _wargv_expand_fn)(wchar_t *, _PFN_ADDARG);
 _argv_expand_fn _argv_expand_ptr = _expand_wild;
 _wargv_expand_fn _wargv_expand_ptr = _wexpand_wild;
+
+#else
+
+/*
+ * Dummy declaration for a guaranteed non-empty translation unit.
+ */
+#ifndef __cplusplus
+typedef int wildargs_dummy_t;
+#endif
+
 #endif
